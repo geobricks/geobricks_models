@@ -5,6 +5,8 @@ from geobricks_common.core.log import logger
 from geobricks_models.utils.filter_shapefile import cut_shp
 from geobricks_models.utils import crop_raster
 from geobricks_models.utils.mask_threshold import mask_raster_by_thresholds
+from geobricks_gis_raster.core.raster import get_srid, get_pixel_size
+import rasterio
 
 log = logger(__file__)
 
@@ -12,10 +14,11 @@ log = logger(__file__)
 def calc_hotspot(obj):
     print obj
 
-    # vector object
+    # mapping objects
     vector = obj['vector']
     raster = obj['raster']
     model_options = obj['model_options']
+    zonalsum_options = obj['stats']['zonalsum']
 
     # create new AOI shapefile
     shp_path = get_vector_path(vector)
@@ -35,8 +38,17 @@ def calc_hotspot(obj):
     indicator_aoi_mask_path = mask_raster_by_thresholds(indicator_aoi_path, min, max)
 
     # reproject indicator to cultivation crs
+    with rasterio.open(cultivation_aoi_path) as source:
+        print source.meta
 
-    # resample ndvi to wheat
+    source_crs = 'EPSG:' + get_srid(cultivation_aoi_path)
+    source_pixel_size = get_pixel_size(cultivation_aoi_path)
+    print source_pixel_size
+
+
+    # resample indicator to cultivation pixel size
+    # TODO: how to do snapping (affine?) both pixels
+    # TODO: check if they are of the same size
 
     # hotspot_aoi_layer = multiply ndvi_mask * wheat
 
@@ -44,19 +56,6 @@ def calc_hotspot(obj):
 
     # calc for each gaul1 the zonalsum
 
-    # raster_path = get_raster_path({
-    #     'datasource': ['geoserver'],
-    #     'workspace': 'ndvi_anomaly',
-    #     'layerName': 'ndvi_anomaly_1km_mod13a3_200803_3857'
-    # })
-    #
-    # vector_path = get_vector_path({
-    #     'datasource': ['storage'],
-    #     'layerName': 'gaul1_nena_4326'
-    # })
-
-    # print raster_path
-    # print vector_path
 
 
 
