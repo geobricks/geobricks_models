@@ -25,7 +25,7 @@ def multiply_raster(input_raster1, input_raster2, output_path=None):
 
     # Writing output file
     # TODO: random output filename
-    log.info("Multply Raster, Writing: " + output_layer_path)
+    log.info("Multiply Raster, Writing: " + output_layer_path)
     with rasterio.open(output_layer_path, 'w', **kwargs) as dst:
         dst.write_band(1, data.astype(rasterio.float32))
 

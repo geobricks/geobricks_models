@@ -23,7 +23,6 @@ def by_shp(input_raster, input_shp):
     return crop_by_shapefile_cutline(output_file, input_shp)
 
 
-
 def crop_by_shapefile_bbox(input_raster, input_shp):
 
     log.info('Crop_by_shapefile_bbox: ' + input_raster + ' by ' + input_shp)
