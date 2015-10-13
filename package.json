@@ -1,0 +1,36 @@
+{
+   "name": "geobricks_models",
+   "label": {
+      "en": "Geobricks Models"
+   },
+   "language": "Python",
+   "description": "Geobricks core library.",
+   "license": "GPL2",
+   "homepage": "http://geobricks.org/",
+   "keywords": [
+      "gis"
+   ],
+   "version": "0.0.1",
+   "contributors": [
+      {
+         "name": "Simone Murzilli",
+         "email": "simone.murzilli@gmail.com"
+      },
+      {
+         "name": "Guido Barbaglia",
+         "email": "guido.barbaglia@gmail.com"
+      },
+      {
+         "name": "Stefano Cudini",
+         "email": "stefano.cudini@gmail.com"
+      }
+   ],
+   "repository": {
+      "type": "git",
+      "url": "https://github.com/geobricks/geobricks_models"
+   },
+   "devDependencies": {
+      "grunt": "~0.4.5",
+      "grunt-markdown": "~0.7.0"
+   }
+}
