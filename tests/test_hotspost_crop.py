@@ -1,13 +1,65 @@
 import unittest
-import os
-from geobricks_common.core.filesystem import get_raster_path, get_raster_path_published, get_raster_path_storage, get_vector_path_storage, get_vector_path
+from geobricks_models.core.hotspot_crop import calc_hotspot
 
+obj = {
+    'raster': [
+        {
+            'datasource': ['geoserver'],
+            'workspace': 'ndvi_anomaly',
+            'layerName': 'ndvi_anomaly_1km_mod13a3_200803_3857'
+        },
+        {
+            'datasource': ['storage'],
+            'layerName': 'wheat_area_4326'
+        }
+    ],
+    # TODO check the other vector definition
+    'vector': {
+        'datasource': 'storage',
+        'type': 'shapefile',
+        'layerName': 'gaul1_nena_4326',
+
+        # TODO: geostatistics example
+        # 'options': {
+        #     'layer': 'gaul1_2015_4326',  # required (table or table alias)
+        #     'column': 'adm0_name',  # required (column or column_alias)
+        #     'codes': ['Italy'],
+        #     'groupby': ['adm1_code', 'adm1_name']  # optional used to get subcodes (i.e. get all italian's region)
+        # },
+
+        #  TODO: check the other vector filter definition (this should be the same as in geostatistics?)
+        'filter': {
+            'column': 'adm1_code',
+            'codes': [61525, 2755, 373],
+            # TODO: find a proper name instead of output (this should be the same as in geostatistics?)
+            'output': ['adm1_name', 'adm1_code']
+        },
+        # TODO check other vector label
+    },
+    # TODO check the other stats
+    'stats': {
+        'zonalsum': {
+            # weight of the zonalsum pixel
+            'weight': 1
+        }
+    },
+
+    # TODO: is it the right name?
+    'model_options': {
+        'threshold': {
+            'min': None,
+            'max': -30
+        }
+    }
+
+}
 
 class GeobricksTest(unittest.TestCase):
 
     # Raster
     def test_hotspot_crop(self):
-        print
+        result = calc_hotspot(obj)
+        print result
 
 
 
