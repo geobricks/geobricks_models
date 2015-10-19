@@ -11,6 +11,9 @@ def multiply_raster(input_raster1, input_raster2, output_path=None):
 
     output_layer_path = create_tmp_filename('geotiff', 'multiply_raster_')
 
+    print input_raster1
+    print input_raster2
+
     r1 = rasterio.open(input_raster1)
     r_data1 = r1.read_band(1).astype(float)
 

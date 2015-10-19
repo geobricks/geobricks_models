@@ -9,7 +9,3 @@ def zonalsum(input_raster, scale_factor=1):
         r_data = r.read_band(1).astype(float).flatten()
 
         return sum(r_data) * scale_factor
-
-
-print zonalsum('/media/vortex/LaCie/nena/calc.tif', 12)
-# print zonalsum('/media/vortex/LaCie/nena/calc.tif', 11)

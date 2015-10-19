@@ -39,17 +39,22 @@ def mask_raster_by_thresholds(input_raster, min=None, max=None, nodata=None):
     # compute treshold
     data = _compute_thresholds(r_data, min, max, nodata)
 
-    print min, max, nodata
-    print data
-
     # Writing output file
     log.info("Mask_raster_by_thresholds: " + output_layer_path)
     with rasterio.open(output_layer_path, 'w', **kwargs) as dst:
         dst.write_band(1, data.reshape(r.shape[0], r.shape[1]).astype(rasterio.float32))
 
+    print output_layer_path
     return output_layer_path
 
 def _compute_thresholds(array, min, max, nodata=None):
+
+    # TODO: fix it. this is a dirty fix for nodata value
+    min = nodata if (nodata != None and min < nodata) else min
+    # max = nodata if (nodata != None and max > nodata) else max
+
+    print min, max, nodata
+
 
     index = (array > min) & (array <= max) & (array != nodata)
 

@@ -1,18 +1,22 @@
+from copy import deepcopy
 from geobricks_common.core.filesystem import get_raster_path
 from geobricks_common.core.filesystem import get_vector_path
 from geobricks_common.core.log import logger
 
+from geobricks_gis_raster.core.raster import get_srid, get_pixel_size
+
 from geobricks_models.utils.filter_shapefile import cut_shp
 from geobricks_models.utils import crop_raster
 from geobricks_models.utils.mask_threshold import mask_raster_by_thresholds
-from geobricks_gis_raster.core.raster import get_srid, get_pixel_size
-import rasterio
+from geobricks_models.utils.resample_reproject_raster import resample
+from geobricks_models.utils.calc_aoi_hotspot import multiply_raster
+from geobricks_models.utils.zonalsum import zonalsum
+
 
 log = logger(__file__)
 
 
 def calc_hotspot(obj):
-    print obj
 
     # mapping objects
     vector = obj['vector']
@@ -38,79 +42,42 @@ def calc_hotspot(obj):
     indicator_aoi_mask_path = mask_raster_by_thresholds(indicator_aoi_path, min, max)
 
     # reproject indicator to cultivation crs
-    with rasterio.open(cultivation_aoi_path) as source:
-        print source.meta
+    cultivation_aoi_srs = 'EPSG:' + get_srid(cultivation_aoi_path)
+    cultivation_aoi_pixel_size = get_pixel_size(cultivation_aoi_path)
 
-    source_crs = 'EPSG:' + get_srid(cultivation_aoi_path)
-    source_pixel_size = get_pixel_size(cultivation_aoi_path)
-    print source_pixel_size
-
+    indicator_aoi_mask_srs = 'EPSG:' + get_srid(indicator_aoi_mask_path)
 
     # resample indicator to cultivation pixel size
     # TODO: how to do snapping (affine?) both pixels
-    # TODO: check if they are of the same size
+    indicator_aoi_mask_resample_path = resample(indicator_aoi_mask_path, cultivation_aoi_pixel_size, indicator_aoi_mask_srs, cultivation_aoi_srs)
 
+    # TODO: check if indicator and cultivation are of the same size
+
+    print "indicator"
+    print indicator_aoi_mask_resample_path
     # hotspot_aoi_layer = multiply ndvi_mask * wheat
+    hotspot_aoi_layer_path = multiply_raster(indicator_aoi_mask_resample_path, cultivation_aoi_path)
+
+    print hotspot_aoi_layer_path
 
     # for each gaul1 cut the hotspot_aoi_layer
+    zonalsum_results = []
+    for code in vector['filter']['codes']:
+        print vector['filter']
+        filter = deepcopy(vector['filter'])
+        filter['codes'] = [code]
+        region_shp_path = cut_shp(shp_path, filter)
 
-    # calc for each gaul1 the zonalsum
+        # crop the hotspot_aoi_layer with region shp
+        region_hotspot_path = crop_raster.crop_by_shapefile_bbox(hotspot_aoi_layer_path, region_shp_path)
 
+        print region_hotspot_path
 
+        # calc for each gaul1 the zonalsum
+        value = zonalsum(region_hotspot_path, zonalsum_options['weight'])
+        zonalsum_results.append({
+            'code': code,
+            'value': value
+        })
 
-
-
-obj = {
-    'raster': [
-        {
-            'datasource': ['geoserver'],
-            'workspace': 'ndvi_anomaly',
-            'layerName': 'ndvi_anomaly_1km_mod13a3_200803_3857'
-        },
-        {
-            'datasource': ['storage'],
-            'layerName': 'wheat_area_4326'
-        }
-    ],
-    # TODO check the other vector definition
-    'vector': {
-        'datasource': 'storage',
-        'type': 'shapefile',
-        'layerName': 'gaul1_nena_4326',
-
-        # TODO: geostatistics example
-        # 'options': {
-        #     'layer': 'gaul1_2015_4326',  # required (table or table alias)
-        #     'column': 'adm0_name',  # required (column or column_alias)
-        #     'codes': ['Italy'],
-        #     'groupby': ['adm1_code', 'adm1_name']  # optional used to get subcodes (i.e. get all italian's region)
-        # },
-
-        #  TODO: check the other vector filter definition (this should be the same as in geostatistics?)
-        'filter': {
-            'column': 'adm1_code',
-            'codes': [61525, 2755],
-            # TODO: find a proper name instead of output (this should be the same as in geostatistics?)
-            'output': ['adm1_name', 'adm1_code']
-        },
-        # TODO check other vector label
-    },
-    # TODO check the other stats
-    'stats': {
-        'zonalsum': {
-            # weight of the zonalsum pixel
-            'weight': 10
-        }
-    },
-
-    # TODO: is it the right name?
-    'model_options': {
-        'threshold': {
-            'min': None,
-            'max': -30
-        }
-    },
-
-}
-
-calc_hotspot(obj)
+    return zonalsum_results
