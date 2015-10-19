@@ -56,22 +56,4 @@ def cut_shp(input_shp, filter, output_path=None):
     destination_prj = os.path.join(os.path.dirname(output_file), get_filename(output_file) + '.prj')
     copyfile(original_prj, destination_prj)
 
-
-
-
     return output_file
-
-
-
-# filter = {
-#     "shapefile_name" ??
-#     "property": "adm1_code",
-#     "codes": [61525, 2755]
-# }
-#
-# output_files = cut_shp(
-#     '/media/vortex/LaCie/nena/gaul1/',
-#     '/media/vortex/LaCie/nena/gaul1/output',
-#     filter,
-#     'aoi'
-# )

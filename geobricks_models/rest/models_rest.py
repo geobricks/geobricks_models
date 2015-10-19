@@ -33,13 +33,20 @@ def discovery():
     return Response(json.dumps(out), content_type='application/json; charset=utf-8')
 
 
+
 @app.route('/hotspot/crops/', methods=['POST'])
 @app.route('/hotspot/crops', methods=['POST'])
 @cross_origin(origins='*', headers=['Content-Type'])
-def get_scatter_plot():
+def get_hotspot_crops_analysis():
     try:
+        print "hotspot"
         user_json = request.get_json()
+        print user_json
         result = calc_hotspot(user_json)
+        print result
         return Response(json.dumps(result), content_type='application/json; charset=utf-8')
     except Exception, e:
         raise Exception(e.get_message(), e.get_status_code())
+
+
+

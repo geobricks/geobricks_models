@@ -1,7 +1,7 @@
 from flask import Flask
 from flask.ext.cors import CORS
-from geobricks_common.config.config import config
-from geobricks_common.rest import common_rest as rest
+from geobricks_models.config.config import config
+from geobricks_models.rest import models_rest as rest
 import logging
 
 # Initialize the Flask app

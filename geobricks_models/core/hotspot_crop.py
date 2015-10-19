@@ -3,7 +3,8 @@ from geobricks_common.core.filesystem import get_raster_path
 from geobricks_common.core.filesystem import get_vector_path
 from geobricks_common.core.log import logger
 
-from geobricks_gis_raster.core.raster import get_srid, get_pixel_size
+# from geobricks_gis_raster.core.raster import get_srid, get_pixel_size
+from geobricks_models.utils.utils_from_geobricks_gis_raster import get_srid, get_pixel_size
 
 from geobricks_models.utils.filter_shapefile import cut_shp
 from geobricks_models.utils import crop_raster
@@ -18,23 +19,36 @@ log = logger(__file__)
 
 def calc_hotspot(obj):
 
+    print obj
+
     # mapping objects
     vector = obj['vector']
     raster = obj['raster']
     model_options = obj['model_options']
     zonalsum_options = obj['stats']['zonalsum']
 
+    print vector
+    print raster
+    print vector['filter']
+
     # create new AOI shapefile
     shp_path = get_vector_path(vector)
+    print shp_path
     aoi_shp_path = cut_shp(shp_path, vector['filter'])
+
+    print raster[0]
 
     # extract bbox AOI indicator (i.e. NDVI)
     indicator_path = get_raster_path(raster[0])
     indicator_aoi_path = crop_raster.crop_by_shapefile_bbox(indicator_path, aoi_shp_path)
 
+    print indicator_aoi_path
+
     # extract bbox AOI cultivation/crop (i.e. WHEAT)
     cultivation_path = get_raster_path(raster[1])
     cultivation_aoi_path = crop_raster.crop_by_shapefile_bbox(cultivation_path, aoi_shp_path)
+
+    print cultivation_aoi_path
 
     # indicator_mask AOI indicator with threshold
     min = model_options['threshold']['min'] if 'min' in model_options['threshold'] else None
@@ -69,7 +83,7 @@ def calc_hotspot(obj):
         region_shp_path = cut_shp(shp_path, filter)
 
         # crop the hotspot_aoi_layer with region shp
-        region_hotspot_path = crop_raster.crop_by_shapefile_bbox(hotspot_aoi_layer_path, region_shp_path)
+        region_hotspot_path = crop_raster.by_shp(hotspot_aoi_layer_path, region_shp_path)
 
         print region_hotspot_path
 

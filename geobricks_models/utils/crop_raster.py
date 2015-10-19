@@ -78,7 +78,8 @@ def crop_by_shapefile_cutline(input_raster, input_shp):
 
     args = [
         'gdalwarp', # gdalwarp -cutline gaul1/output/aio/shape.shp ndvi_cut.geotiff ndvi_subcut3.geotif',
-        '-co', 'COMPRESS=DEFLATE'
+        '-co',
+        'COMPRESS=DEFLATE',
         '-cutline',
         input_shp,
         input_raster,
@@ -95,7 +96,3 @@ def crop_by_shapefile_cutline(input_raster, input_shp):
         stdout_value = proc.communicate()[0]
         raise Exception(stdout_value)
 
-
-output_file = by_shp('/media/vortex/LaCie/nena/ndvi_anomaly/ndvi_anomaly_1km_mod13a3_200803_3857.geotiff', '/media/vortex/LaCie/nena/gaul1/output/aio/shape.shp')
-# # print "END!!!"
-print output_file
