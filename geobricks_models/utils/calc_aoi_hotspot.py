@@ -19,22 +19,14 @@ def multiply_raster(input_raster1, input_raster2, output_path=None):
     r2 = rasterio.open(input_raster2)
     r_data2 = r2.read_band(1).astype(float).flatten()
 
-    print "HERE!"
-    print r1.meta
-    print r2.meta
 
     nodata1 = r1.meta['nodata'] if 'nodata' in r1.meta else None
-
-    print r1.meta['nodata']
     nodata2 = r2.meta['nodata'] if 'nodata' in r2.meta else None
 
     index1 = (r_data1 != nodata1)
     index2 = (r_data2 != nodata2)
 
     r_data2 = index2 * r_data2
-
-    print nodata1
-    print nodata2
 
     # initialize output raster
     data, kwargs = initialize_rasterio_raster(r1, rasterio.float32)
