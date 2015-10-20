@@ -2,6 +2,7 @@ import rasterio
 import subprocess
 from geobricks_proj4_to_epsg.core.proj4_to_epsg import get_epsg_code_from_proj4
 from geobricks_common.core.log import logger
+import json
 
 log = logger(__file__)
 
@@ -51,6 +52,22 @@ def get_pixel_size(input_file, formula=None):
             pixel_size = output[output.find("(")+1:output.find(",")]
             return str(pixel_size)
         return None
+    except Exception, e:
+        log.error(e)
+        raise Exception(e, 400)
+
+
+def get_bbox(input_file):
+
+    try:
+        process = subprocess.Popen(['rio', 'info', input_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, error = process.communicate()
+        v = json.loads(output.strip().replace("'", "\""))
+        west = v['bounds'][0]
+        south = v['bounds'][1]
+        east = v['bounds'][2]
+        north = v['bounds'][3]
+        return west, south, east, north
     except Exception, e:
         log.error(e)
         raise Exception(e, 400)

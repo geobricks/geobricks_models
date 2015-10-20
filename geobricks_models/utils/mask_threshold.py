@@ -11,7 +11,7 @@ log = logger(__file__)
 # cut the raster layer by a max_threshold i.e. < -30%
 def mask_raster_by_thresholds(input_raster, min=None, max=None, nodata=None):
 
-    print min, max, nodata
+    # log.info(min, max, nodata)
 
     output_layer_path = create_tmp_filename('geotiff', 'indicator_mask_')
 
@@ -44,17 +44,15 @@ def mask_raster_by_thresholds(input_raster, min=None, max=None, nodata=None):
     with rasterio.open(output_layer_path, 'w', **kwargs) as dst:
         dst.write_band(1, data.reshape(r.shape[0], r.shape[1]).astype(rasterio.float32))
 
-    print output_layer_path
+    log.info(output_layer_path)
     return output_layer_path
 
 def _compute_thresholds(array, min, max, nodata=None):
 
     # TODO: fix it. this is a dirty fix for nodata value
-    min = nodata if (nodata != None and min < nodata) else min
+    #min = nodata if (nodata != None and min < nodata) else min
     # max = nodata if (nodata != None and max > nodata) else max
-
-    print min, max, nodata
-
+    # log.info(min, max, nodata)
 
     index = (array > min) & (array <= max) & (array != nodata)
 

@@ -11,9 +11,6 @@ def multiply_raster(input_raster1, input_raster2, output_path=None):
 
     output_layer_path = create_tmp_filename('geotiff', 'multiply_raster_')
 
-    print input_raster1
-    print input_raster2
-
     r1 = rasterio.open(input_raster1)
     r_data1 = r1.read_band(1).astype(float)
 
@@ -33,6 +30,3 @@ def multiply_raster(input_raster1, input_raster2, output_path=None):
         dst.write_band(1, data.astype(rasterio.float32))
 
     return output_layer_path
-
-
-# print multiply_raster('/media/vortex/LaCie/nena/wheat_area1.tif', '/media/vortex/LaCie/nena/test.tif', '/media/vortex/LaCie/nena/')

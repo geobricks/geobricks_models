@@ -9,13 +9,16 @@ log = logger(__file__)
 # gdalwarp apple_area1.tif apple_area1_res.tif -overwrite -co COMPRESS=DEFLATE -tr 0.083333340000000 -0.08333334000000 -r cubic
 
 
-def resample(input_file, pixel_size='0.08333334', s_srs=None, t_srs=None, resample_algorithm='cubic'):
+def resample(input_file, west, south, east, north, pixel_size='0.08333334', s_srs=None, t_srs=None, resample_algorithm='near'):
     log.info(pixel_size)
 
+    if resample_algorithm is None:
+        resample_algorithm = 'near'
+
     output_file = warp(input_file, s_srs, t_srs)
-    print output_file
-    output_file = pixel_resize(output_file, pixel_size, resample_algorithm)
-    print output_file
+    log.info(output_file)
+    output_file = pixel_resize(output_file, west, south, east, north, pixel_size, resample_algorithm)
+    log.info(output_file)
 
     return output_file
 
@@ -48,7 +51,7 @@ def warp(input_file, s_srs=None, t_srs=None,):
     except Exception, e:
         print e
 
-def pixel_resize(input_file, pixel_size='0.08333334', resample_algorithm='cubic'):
+def pixel_resize(input_file, west, south, east, north, pixel_size='0.08333334', resample_algorithm='near'):
 
     output_file = create_tmp_filename('geotiff', 'resample_')
 
@@ -60,6 +63,11 @@ def pixel_resize(input_file, pixel_size='0.08333334', resample_algorithm='cubic'
         "-multi",
         "-of", "GTiff",
         "-co", "COMPRESS=DEFLATE",
+        '-te',
+        str(west),
+        str(south),
+        str(east),
+        str(north),
         "-tr",
         pixel_size,
         pixel_size,
@@ -68,7 +76,7 @@ def pixel_resize(input_file, pixel_size='0.08333334', resample_algorithm='cubic'
         output_file
     ]
     try:
-        log.info(args)
+        # log.info(args)
         log.info(' '.join(str(x) for x in args))
         #TODO: handle subprocess Error (like that is not taken)
         output = subprocess.check_output(args)
