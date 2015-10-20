@@ -17,7 +17,8 @@ obj = {
     'vector': {
         'datasource': 'storage',
         'type': 'shapefile',
-        'layerName': 'gaul1_nena_4326',
+        # 'layerName': 'gaul1_nena_4326',
+        'layerName': 'afg_gaul1',
 
         # TODO: geostatistics example
         # 'options': {
@@ -30,7 +31,8 @@ obj = {
         #  TODO: check the other vector filter definition (this should be the same as in geostatistics?)
         'filter': {
             'column': 'adm1_code',
-            'codes': [61525, 2755, 373],
+            'codes': [272, 273, 274, 275, 278, 282, 283, 289, 298, 299, 300],
+            #  'codes': [278],
             # TODO: find a proper name instead of output (this should be the same as in geostatistics?)
             'output': ['adm1_name', 'adm1_code']
         },
@@ -40,7 +42,8 @@ obj = {
     'stats': {
         'zonalsum': {
             # weight of the zonalsum pixel
-            'weight': 1
+            # 'weight': 0.01
+            'weight': 0.01
         }
     },
 
@@ -48,8 +51,10 @@ obj = {
     'model_options': {
         'threshold': {
             'min': None,
+            # 'max': -30
             'max': -30
-        }
+        },
+        'resampling': 'near'
     }
 
 }
@@ -69,5 +74,7 @@ def run_test():
 
 if __name__ == '__main__':
     run_test()
+
+
 
 
