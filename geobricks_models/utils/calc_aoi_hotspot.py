@@ -39,7 +39,7 @@ def multiply_raster(input_raster1, input_raster2, output_path=None):
     return output_layer_path
 
 
-def multiply_raster_old(input_raster1, input_raster2, output_path=None):
+def multiply_raster_excluding_nodata(input_raster1, input_raster2, output_path=None):
 
     output_layer_path = create_tmp_filename('geotiff', 'multiply_raster_')
 
