@@ -45,6 +45,7 @@ def mask_raster_by_thresholds(input_raster, min=None, max=None, nodata=None):
         dst.write_band(1, data.reshape(r.shape[0], r.shape[1]).astype(rasterio.float32))
 
     log.info(output_layer_path)
+    print output_layer_path
     return output_layer_path
 
 def _compute_thresholds(array, min, max, nodata=None):

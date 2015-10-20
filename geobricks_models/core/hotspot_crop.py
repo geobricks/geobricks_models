@@ -89,7 +89,7 @@ def calc_hotspot(obj):
 
         })
 
-    # for z in zonalsum_results:
-    #     print z['code'], int(z['c_ac']), int(z['c_aa']), int(z['perc'])
+    for z in zonalsum_results:
+        print z['code'], int(z['c_ac']), int(z['c_aa']), int(z['perc'])
 
     return zonalsum_results
